@@ -24,7 +24,7 @@ sent the request from.
         Needs the terminal panel visible in that window; retries 3×.
      2. *Title match*: AppleScript raises the window whose title ends with
         cwd's basename.
-     3. *Fallback*: `open -b <bundle> <cwd>`.
+     3. *Fallback*: activate the app (`open -b <bundle>`).
    - **Terminal.app / iTerm2**: AppleScript walks windows/tabs and selects the
      one whose TTY matches.
    - **Anything else** (Ghostty, kitty, ...): activates the app.

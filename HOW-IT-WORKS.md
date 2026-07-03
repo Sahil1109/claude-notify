@@ -110,7 +110,8 @@ name.** No VS Code cooperation required.
    panel visible in the target window (hidden panels have no AX elements).
 2. **Title match** — AppleScript raises the window whose title ends with
    cwd's basename. Ambiguous when two windows share a folder name.
-3. **`open -b <bundle> <cwd>`** — opens/focuses the folder at app level.
+3. **`open -b <bundle>`** — just activates the app. Deliberately does NOT
+   open the folder: that spawns a new window when nothing matches.
 
 Terminal.app and iTerm2 don't need any of this: both expose tabs' `tty`
 directly to AppleScript, so `focus.sh` matches the TTY exactly.
