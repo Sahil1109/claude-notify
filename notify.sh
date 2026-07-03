@@ -32,10 +32,19 @@ if [ "${1:-}" = "--worker" ]; then
 
     subtitle="${cwd##*/}"
 
+    # --sender impersonates the terminal app: macOS then activates it natively
+    # on click (with real user-interaction context — something a detached
+    # process can't do itself on macOS 14+). focus.sh only handles raising the
+    # right window/tab afterwards.
+    sender_args=""
+    [ -n "$bundle" ] && sender_args="--sender $bundle"   # bundle ids have no spaces
+
+    # shellcheck disable=SC2086
     result="$("$ALERTER" \
         --message "$msg" \
         --title "Claude Code" \
         --subtitle "$subtitle" \
+        $sender_args \
         --group "claude-notify-${session:-default}" \
         --sound default \
         --timeout 300 \

@@ -106,6 +106,27 @@ tmp="$(mktemp)"
 ' "$SETTINGS" > "$tmp" && mv "$tmp" "$SETTINGS"
 ok "Notification hook added to $SETTINGS (backup created)"
 
+# ------------------------------------------------------------- permissions
+bold "Requesting macOS permissions (grant both — they enable click-to-focus):"
+
+# Automation (Apple Events): triggers the "wants to control System Events"
+# prompt now, instead of failing silently on the first notification click.
+if osascript -e 'tell application "System Events" to count processes' >/dev/null 2>&1; then
+    ok "Automation (System Events) allowed"
+else
+    warn "Automation denied — allow it: System Settings → Privacy & Security → Automation"
+fi
+
+# Accessibility: shows the system dialog pointing at the right settings pane.
+if "$INSTALL_DIR/ax-focus" @check >/dev/null 2>&1; then
+    ok "Accessibility trusted"
+else
+    warn "Accessibility not granted yet — a dialog just pointed you to"
+    warn "System Settings → Privacy & Security → Accessibility."
+    warn "Enable your terminal app (Visual Studio Code / Terminal / iTerm2),"
+    warn "then re-run ./install.sh to verify."
+fi
+
 # -------------------------------------------------------------------- test
 echo '{"session_id":"install-test","cwd":"'"$PWD"'","message":"claude-notify installed — click me to test focus"}' \
     | bash "$INSTALL_DIR/notify.sh"

@@ -81,9 +81,12 @@ EOS
         log "proc=$proc folder=$folder title-match=$matched"
         if [ "$matched" != "matched" ]; then
             # Couldn't identify the window (hidden panel, missing permissions,
-            # renamed title). Just activate the app — never open the folder,
-            # that spawns unwanted new windows.
-            open -b "$target_bundle"
+            # renamed title). Activate the app via Apple Events — the one
+            # activation path macOS honors from a detached process (open -b
+            # and NSRunningApplication.activate are both ignored without
+            # user-interaction context). Needs a one-time Automation grant.
+            fb="$(osascript -e "tell application id \"$target_bundle\" to activate" 2>&1 && echo ok)"
+            log "fallback-activate=${fb:-failed}"
         fi
         ;;
 

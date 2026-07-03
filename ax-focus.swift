@@ -9,8 +9,17 @@ import ApplicationServices
 import AppKit
 
 let args = CommandLine.arguments
+
+// @check: report (and prompt for) accessibility trust of this process.
+if args.count >= 2 && args[1] == "@check" {
+    let opts = [kAXTrustedCheckOptionPrompt.takeUnretainedValue() as String: true] as CFDictionary
+    let trusted = AXIsProcessTrustedWithOptions(opts)
+    print(trusted ? "trusted" : "untrusted")
+    exit(trusted ? 0 : 1)
+}
+
 guard args.count >= 3 else {
-    FileHandle.standardError.write("usage: ax-focus <bundle-id> <needle>\n".data(using: .utf8)!)
+    FileHandle.standardError.write("usage: ax-focus @check | <bundle-id> <@activate|needle>\n".data(using: .utf8)!)
     exit(2)
 }
 let bundleId = args[1]
@@ -19,6 +28,14 @@ let needle = args[2]
 guard let app = NSRunningApplication.runningApplications(withBundleIdentifier: bundleId).first else {
     print("app-not-running")
     exit(3)
+}
+
+// Activation-only mode: needs no accessibility permission, and unlike
+// `open -b` it works from a detached background process.
+if needle == "@activate" {
+    app.activate(options: [.activateIgnoringOtherApps])
+    print("activated")
+    exit(0)
 }
 
 let axApp = AXUIElementCreateApplication(app.processIdentifier)
