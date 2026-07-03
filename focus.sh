@@ -80,12 +80,10 @@ EOS
 
         log "proc=$proc folder=$folder title-match=$matched"
         if [ "$matched" != "matched" ]; then
-            # No window has that folder: open it (new window) / activate app.
-            if [ -n "$cwd" ]; then
-                open -b "$target_bundle" "$cwd"
-            else
-                open -b "$target_bundle"
-            fi
+            # Couldn't identify the window (hidden panel, missing permissions,
+            # renamed title). Just activate the app — never open the folder,
+            # that spawns unwanted new windows.
+            open -b "$target_bundle"
         fi
         ;;
 
