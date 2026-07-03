@@ -35,6 +35,8 @@ focus strategy matched).
 ## Install
 
 ```sh
+git clone https://github.com/Sahil1109/claude-notify.git
+cd claude-notify
 ./install.sh
 ```
 
